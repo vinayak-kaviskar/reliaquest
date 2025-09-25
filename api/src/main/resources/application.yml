@@ -1,2 +1,21 @@
-spring.application.name: employee-api
-server.port: 8111
+spring:
+  application:
+    name: employee-api
+  web:
+    client:
+      rest-template:
+        connect-timeout: 5s
+        read-timeout: 15s
+
+server:
+  port: 8111
+
+app:
+  employee-service:
+    domain: http://localhost:8112
+    base-path: /api/v1/employee
+  retry:
+    max-attempts: 4
+    initial-delay: 30000  # 30 seconds
+    multiplier: 2
+

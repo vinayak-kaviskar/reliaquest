@@ -16,6 +16,10 @@ public class RandomRequestLimitInterceptor implements HandlerInterceptor {
     private static final Duration REQUEST_BACKOFF_DURATION =
             Duration.ofSeconds(RandomGenerator.getDefault().nextInt(30, 90));
 
+//    private static final int REQUEST_LIMIT = RandomGenerator.getDefault().nextInt(1, 2);
+//    private static final Duration REQUEST_BACKOFF_DURATION =
+//        Duration.ofSeconds(RandomGenerator.getDefault().nextInt(1000, 2000));
+
     private final AtomicReference<RequestLimit> requestLimit = new AtomicReference<>(RequestLimit.init());
 
     @Override
@@ -24,12 +28,14 @@ public class RandomRequestLimitInterceptor implements HandlerInterceptor {
             if (Instant.now()
                     .minus(REQUEST_BACKOFF_DURATION)
                     .isBefore(requestLimit.get().getLastRequested())) {
+                System.out.println("*************Too many requests**************");
                 response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
                 return false;
             }
             if (Instant.now()
                     .minus(REQUEST_BACKOFF_DURATION)
                     .isAfter(requestLimit.get().getLastRequested())) {
+                System.out.println("*************SET LIMIT**************");
                 requestLimit.set(RequestLimit.init());
             }
         } else {
